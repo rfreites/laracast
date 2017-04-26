@@ -10,6 +10,27 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use Facades\ {
+    App\Services\PaymentGateway,
+    App\Services\Twitter
+};
+
+Route::get('/pay/{amount}', function ($amount) {
+    PaymentGateway::pay($amount);
+});
+
+
+Route::get('/twit', function () {
+   Twitter::publish('Here is my status');
+});
+
+Route::get('form', function () {
+    return view('form');
+});
+
+Route::post('form', function () {
+    return request()->all();
+});
 
 //Event::listen('eloquent.created: App\Post', function () {
 //    var_dump('Un Post ha sido creado')
@@ -37,6 +58,25 @@ Route::get('/message', function(){
 });
 
 Route::resource('post','PostController');
+
+Route::get('timezone', function () {
+    $value = config('app.timezone');
+    return $value;
+});
+
+Route::get('enviroment', function () {
+    $environment = App::environment();
+   return $environment;
+});
+
+/**
+ * Notifications
+ */
+
+Route::get('/notification', function (App\User $user) {
+    $post = App\Post::first();
+   $user->notify(new \App\Notifications\PostPublished($post));
+});
 
 Auth::routes();
 
