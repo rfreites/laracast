@@ -15,6 +15,8 @@ use Facades\ {
     App\Services\Twitter
 };
 
+use App\Events\MessagePosted;
+
 Route::get('/pay/{amount}', function ($amount) {
     PaymentGateway::pay($amount);
 });
@@ -77,6 +79,37 @@ Route::get('/notification', function (App\User $user) {
     $post = App\Post::first();
    $user->notify(new \App\Notifications\PostPublished($post));
 });
+
+Route::get('/pusher', function () {
+    return view('pusher');
+});
+
+Route::get('/messages', function(){
+  return App\Message::with('user')->get();
+})->middleware('auth');
+
+Route::post('/messages', function(){
+
+  $user = Auth::user();
+  $message = $user->messages()->create([
+    'message' => request()->get('message')
+  ]);
+
+  // Announce that a new message has been posted
+  try{
+      event(new MessagePosted($message, $user));
+  }catch(\Exception $e){
+    Log::info($e);
+  }
+
+  return ['status' => 'OK'];
+
+})->middleware('auth');
+
+
+Route::get('/chat', function () {
+    return view('chat');
+})->middleware('auth');
 
 Auth::routes();
 

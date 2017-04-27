@@ -14,9 +14,49 @@ require('./bootstrap');
  */
 
 Vue.component('example', require('./components/Example.vue'));
+Vue.component('chat-message', require('./components/ChatMessage.vue'));
+Vue.component('chat-log', require('./components/ChatLog.vue'));
+Vue.component('chat-composer', require('./components/ChatComposer.vue'));
 
 const app = new Vue({
     el: '#app',
+    data: {
+      messages: [
+        // {
+        //   message: "Este es un mensage",
+        //   user: "Ronny"
+        // },
+        // {
+        //   message: "Este es un mensage",
+        //   user: "Ronny"
+        // }
+      ]
+    },
+    methods: {
+      addMessage(message) {
+        // Add to existing messages
+        this.messages.push(message);
 
-    methods: {}
+        //Persis to the database
+        axios.post('/messages', message).then(response => {
+          // console.log(response);
+        });
+
+        // console.log("Message added");
+      }
+    },
+    created() {
+      axios.get('/messages').then(response => {
+        this.messages = response.data;
+        // console.log(response.data);
+      });
+
+      Echo.join('chatroom')
+          .here()
+          .joining()
+          .leaving()
+          .listen('MessagePosted', (e) => {
+            console.log(e);
+          })
+    }
 });
