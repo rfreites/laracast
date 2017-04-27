@@ -99,7 +99,7 @@ Route::post('/messages', function(){
   try{
       event(new MessagePosted($message, $user));
   }catch(\Exception $e){
-    Log::info($e);
+    Log::info($e->getMessage());
   }
 
   return ['status' => 'OK'];

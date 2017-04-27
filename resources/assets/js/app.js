@@ -56,7 +56,7 @@ const app = new Vue({
           .joining()
           .leaving()
           .listen('MessagePosted', (e) => {
-            console.log(e);
-          })
+              console.log(e.description);
+          });
     }
 });

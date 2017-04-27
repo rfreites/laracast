@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="list-group">
-    <chat-message v-for="message in messages" v-bind:message="message" v-bind:user="user"></chat-message>
+    <chat-message v-for="message in messages" v-bind:message="message"></chat-message>
     <div class="list-group-item" v-show="messages.length === 0">
       Nothing here yet!
     </div>
